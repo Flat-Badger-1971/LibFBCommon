@@ -1,0 +1,23 @@
+## Title: Flat Badger's utility library
+## Description: Common functions used with addons created by Flat Badger
+## Author: Flat Badger
+## APIVersion: 101043 101044
+## AddOnVersion: 1000
+## Version: 1.0.0
+## IsLibrary: true
+
+# DISCLAIMER:
+#
+# This library is not created by, affiliated with or sponsored by ZeniMax
+# Media Inc. or its affiliates. The Elder Scrolls® and related logos are
+# registered trademarks or trademarks of ZeniMax Media Inc. in the United
+# States and/or other countries. All rights reserved.
+#
+# You can read the full terms at:
+# https://account.elderscrollsonline.com/add-on-terms
+
+LibFBCommon.lua
+
+modules/utilities.lua
+
+classes/eventManager.lua
