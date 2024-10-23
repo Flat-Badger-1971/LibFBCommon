@@ -1,5 +1,8 @@
-local manager = ZO_Object:Subclass()
+local L = _G.LibFBCommon
 local searchPath, setPath, simpleCopy
+
+L.SavedVarsManager = ZO_Object:Subclass()
+local manager = L.SavedVarsManager
 
 ---Create a new instance of the saved vars manager
 ---@param varFileName string            the name of the saved vars file as specified in the manifest
@@ -103,8 +106,7 @@ function manager:Copy(server, account, character, copyToAccount)
         characterId = self:GetCharacterId(server, account, character)
     end
 
-    local rawTable = self:GetRawTable()
-    local path = searchPath(rawTable, server, account, characterId)
+    local path = self:SearchPath(true, server, account, characterId)
     local characterSettings = simpleCopy(path, true)
 
     if (copyToAccount) then
@@ -128,7 +130,7 @@ function manager:GetAllAccountCommon(...)
 
     for server, serverData in pairs(rawTable) do
         for account, accountData in pairs(serverData) do
-            local commonAccountVars = searchPath(accountData, "$AccountWide", "COMMON", ...)
+            local commonAccountVars = self:SearchPath(false, accountData, "$AccountWide", "COMMON", ...)
 
             table.insert(accountVars, {server = server, account = account, vars = commonAccountVars})
         end
@@ -203,9 +205,7 @@ end
 
 -- Get settings from the 'COMMON' section, works regardless of whether we are using Account-wide or Character settings
 function manager:GetCommon(...)
-    local rawTable = self:GetRawTable()
-
-    return searchPath(rawTable, self._profile, self._displayName, "$AccountWide", "COMMON", ...)
+    return self:SearchPath(true, self._profile, self._displayName, "$AccountWide", "COMMON", ...)
 end
 
 -- get the current character's unique id
@@ -299,8 +299,7 @@ end
 -- *** based on code from LibSavedVars ***
 function manager:RemoveDefaults()
     local character = self:GetCurrentCharacterId()
-    local rawTable = self:GetRawTable()
-    local rawSavedVarsTable = searchPath(rawTable, self._profile, self._displayName, character)
+    local rawSavedVarsTable = self:SearchPath(true, self._profile, self._displayName, character)
     local commonVars = self:GetCommon()
 
     self:TrimDefaults(rawSavedVarsTable, self._defaults)
@@ -310,8 +309,7 @@ end
 -- add defaults back into the saved vars file
 function manager:RestoreDefaultValues()
     local character = self:GetCurrentCharacterId()
-    local rawTable = self:GetRawTable()
-    local rawSavedVarsTable = searchPath(rawTable, self._profile, self._displayName, character)
+    local rawSavedVarsTable = self:SearchPath(true, self._profile, self._displayName, character)
     local commonVars = self:GetCommon()
 
     self:FillDefaults(rawSavedVarsTable, self._defaults)
@@ -363,6 +361,14 @@ function manager:TrimDefaults(savedVarsTable, defaults)
                 savedVarsTable[key] = nil
             end
         end
+    end
+end
+
+function manager:SearchPath(withRaw, ...)
+    if (withRaw) then
+        return searchPath(self:GetRawTable(), ...)
+    else
+        return searchPath(...)
     end
 end
 
