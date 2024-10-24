@@ -21,3 +21,5 @@ LibFBCommon.lua
 modules/utilities.lua
 
 classes/eventManager.lua
+classes/timerManager.lua
+classes/savedVarsManager.lua

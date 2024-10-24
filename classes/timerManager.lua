@@ -4,11 +4,10 @@ L.TimerManager = ZO_Object:Subclass()
 
 local t = L.TimerManager
 
-function t:New(addonName, timeFunction)
+function t:New(addonName)
     local events = ZO_Object.New(self)
 
     self.addonName = addonName
-    self.timeFunction = timeFunction
     self.timerFunctions = {}
 
     return events
@@ -101,19 +100,15 @@ function t:UnregisterForUpdate(time, func)
     end
 end
 
-function t:DisableUpdates(includeTime)
+function t:DisableUpdates()
     for time, funcs in pairs(self.timerFunctions) do
         if (#funcs ~= 0) then
             EVENT_MANAGER:UnregisterForUpdate(string.format("%s%s", self.addonName, tostring(time)))
         end
     end
-
-    if (includeTime) then
-        EVENT_MANAGER:UnregisterForUpdate(self.addonName .. "time")
-    end
 end
 
-function t:EnableUpdates(includeTime)
+function t:EnableUpdates()
     for time, funcs in pairs(self.timerFunctions) do
         if (#funcs ~= 0) then
             EVENT_MANAGER:RegisterForUpdate(
@@ -124,15 +119,5 @@ function t:EnableUpdates(includeTime)
                 end
             )
         end
-    end
-
-    if (includeTime and self.timeFunction) then
-        EVENT_MANAGER:RegisterForUpdate(
-            self.addonName .. "time",
-            1000,
-            function()
-                self.timeFunction()
-            end
-        )
     end
 end

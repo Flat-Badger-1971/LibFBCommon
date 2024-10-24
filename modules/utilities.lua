@@ -1,5 +1,8 @@
 local L = _G.LibFBCommon
 
+-- linefeed character constant
+L.LF = string.char(10)
+
 ---add number separators
 ---@param number number     the number needing separators
 ---@param grouping number   number of digits to group by, e.g 3
@@ -32,7 +35,7 @@ function L.AddSeparators(number, grouping, separator)
 end
 
 ---take a mixed table of ids and id ranges and create a single contiguous list of values
----e.g. [1,3,"4-9"] will produce [1,3,4,5,6,7,8,9]
+---e.g. [1,3,"4-9"] will produce {[1] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true ,[9] = true}
 ---@param listInfo table
 ---@return table
 function L.BuildList(listInfo)
@@ -72,9 +75,9 @@ end
 
 ---create a ZO_ColorDef object from either individual values, a colour name or a table of values
 ---@param r number|string|table red value|predefined colour name|table of rgb values
----@param g number              green value
----@param b number              blue value
----@param a number              alpha value
+---@param g? number              green value
+---@param b? number              blue value
+---@param a? number              alpha value
 ---@return userdata
 function L.Colour(r, g, b, a)
     if type(r) == "string" then
@@ -413,7 +416,8 @@ end
 
 ---is the player carrying any stolen items?
 ---@return boolean
-function L.HasStolenItemsInBackpack()
+---@return table
+function L.IsCarryingStolenItems()
     local filteredItems =
         SHARED_INVENTORY:GenerateFullSlotData(
         function(itemdata)
@@ -422,7 +426,7 @@ function L.HasStolenItemsInBackpack()
         _G.BAG_BACKPACK
     )
 
-    return #filteredItems > 0
+    return #filteredItems > 0, filteredItems
 end
 
 ---check if the player is currently in a PvP zone
@@ -500,6 +504,42 @@ function L.Repeat(input, times)
     end
 
     return output
+end
+
+---scan the player's current buffs and return any that match the supplied list
+---@param buffList table            a list of abilityIds to look for, e.g. {[127596] = true, [127572] = true}
+---@param timeFormatter function    a formatter function that accepts a number of seconds remaining as its parameter
+---@param nameColour? string        an optional colour for the buff name in rgb hex format
+---@return table
+function L.ScanBuffs(buffList, timeFormatter, nameColour)
+    local numberOfBuffs = GetNumBuffs("player")
+    local buffs = {}
+
+    if (numberOfBuffs > 0) then
+        for buffNum = 1, numberOfBuffs do
+            local buffName, _, timeEnding, _, _, _, _, _, _, _, abilityId = GetUnitBuffInfo("player", buffNum)
+
+            if (buffList[abilityId]) then
+                local timeNow = GetGameTimeMilliseconds()
+                local remaining = timeEnding - timeNow / 1000
+                local formattedTime = timeFormatter(remaining)
+                local ttt =
+                    string.format(
+                    "%s%s%s",
+                    L.Colour(nameColour or "f9f9f9"):Colorize(L.Format(buffName)),
+                    L.LF,
+                    L.Format(GetAbilityDescription(abilityId))
+                )
+
+                table.insert(
+                    buffs,
+                    {remaining = remaining, formattedTime = formattedTime, ttt = ttt, buffName = buffName}
+                )
+            end
+        end
+    end
+
+    return buffs
 end
 
 ---Show a centre screen announcement
@@ -666,10 +706,14 @@ end
 ---@param qty number    quantity value
 ---@param total number  maximum value
 ---@return integer
-function L.ToPercent(qty, total)
+function L.ToPercent(qty, total, addSign)
     local pc = tonumber(qty) / tonumber(total)
-
-    return math.floor(pc * 100)
+    local pcf = math.floor(pc * 100)
+    if (addSign) then
+        return tostring(pcf) .. "%"
+    else
+        return pcf
+    end
 end
 
 ---convert a string into Sentence case
@@ -687,15 +731,4 @@ end
 ---@return string
 function L.Trim(stringValue)
     return stringValue:gsub("^%s*(.-)%s*$", "%1")
-end
-
----get the difference between the current version and the supplied version
----@param currentversion string current version string
----@param checkVersion string   version string to check against
----@return number
-function L.VersionDelta(currentversion, checkVersion)
-    local curVersion = currentversion:gsub("%.", "")
-    local chkVersion = checkVersion:gsub("%.", "")
-
-    return tonumber(curVersion) - tonumber(chkVersion)
 end
