@@ -679,6 +679,19 @@ function L.SimpleTableCompare(t1, t2)
     return table.concat(t1) == table.concat(t2)
 end
 
+---return a string containing the specified number of space characters
+---@param numberOfSpaces number
+---@return string
+function L.Space(numberOfSpaces)
+    local output = ""
+
+    for _ = 1, numberOfSpaces do
+        output = string.format("%s%s", output, " ")
+    end
+
+    return output
+end
+
 ---split a delimited string into a table
 ---@param s string          delimiter separated string
 ---@param delimiter string  delimiter
