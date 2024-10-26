@@ -1,4 +1,4 @@
-## Title: Flat Badger's utility library
+## Title: LibFBCommon
 ## Description: Common functions used with addons created by Flat Badger
 ## Author: Flat Badger
 ## APIVersion: 101043 101044
@@ -19,6 +19,7 @@
 LibFBCommon.lua
 
 modules/utilities.lua
+modules/constants.lua
 
 classes/eventManager.lua
 classes/timerManager.lua

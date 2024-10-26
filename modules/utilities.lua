@@ -1,8 +1,5 @@
 local L = _G.LibFBCommon
 
--- linefeed character constant
-L.LF = string.char(10)
-
 ---add number separators
 ---@param number number     the number needing separators
 ---@param grouping number   number of digits to group by, e.g 3
@@ -720,13 +717,17 @@ end
 ---@param total number  maximum value
 ---@return integer
 function L.ToPercent(qty, total, addSign)
-    local pc = tonumber(qty) / tonumber(total)
-    local pcf = math.floor(pc * 100)
-    if (addSign) then
-        return tostring(pcf) .. "%"
-    else
-        return pcf
+    if (total and (total > 0) and qty) then
+        local pc = tonumber(qty) / tonumber(total)
+        local pcf = math.floor(pc * 100)
+        if (addSign) then
+            return tostring(pcf) .. "%"
+        else
+            return pcf
+        end
     end
+
+    return 0
 end
 
 ---convert a string into Sentence case

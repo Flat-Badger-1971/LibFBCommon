@@ -1,17 +1,10 @@
 -- based on LibEventHandler
 local L = _G.LibFBCommon
+local e = ZO_InitializingObject:Subclass()
 
-L.EventManager = ZO_Object:Subclass()
-
-local e = L.EventManager
-
-function e:New(addonName)
-    local events = ZO_Object.New(self)
-
+function e:Initialize(addonName)
     self.addonName = addonName
     self.eventFunctions = {}
-
-    return events
 end
 
 function e:CallEventFunctions(event, ...)
@@ -83,7 +76,13 @@ end
 
 function e:RegisterForEvent(event, func)
     if (self:NeedsRegistration(event, func)) then
-        EVENT_MANAGER:RegisterForEvent(self.addonName, event, self.CallEventFunctions)
+        EVENT_MANAGER:RegisterForEvent(
+        self.addonName,
+            event,
+            function(...)
+                self:CallEventFunctions(...)
+            end
+        )
     end
 end
 
@@ -92,3 +91,5 @@ function e:UnregisterForEvent(event, func)
         EVENT_MANAGER:UnregisterForEvent(self.addonName, event)
     end
 end
+
+L.EventManager = e

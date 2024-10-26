@@ -1,16 +1,9 @@
 local L = _G.LibFBCommon
+local t = ZO_InitializingObject:Subclass()
 
-L.TimerManager = ZO_Object:Subclass()
-
-local t = L.TimerManager
-
-function t:New(addonName)
-    local events = ZO_Object.New(self)
-
+function t:Initialize(addonName)
     self.addonName = addonName
     self.timerFunctions = {}
-
-    return events
 end
 
 function t:CallTimerFunctions(time)
@@ -121,3 +114,6 @@ function t:EnableUpdates()
         end
     end
 end
+
+
+L.TimerManager = t
