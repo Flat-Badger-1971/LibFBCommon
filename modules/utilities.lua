@@ -290,6 +290,29 @@ function L.GetAddonVersion(addonName)
     return version
 end
 
+---create dropdown compatible lists of background and borders
+---@param backgroundPrefix string   the GetString prefix for background names, e.g. "BARSTEWARD_BACKGROUND_STYLE_"
+---@param borderPrefix string       the GetString prefix for border names, e.g. "BARSTEWARD_BORDER_STYLE_"
+---@return table
+---@return table
+function L.GetBackgroundsAndBorders(backgroundPrefix, borderPrefix)
+    local backgroundNames, borderNames = {}, {}
+
+    for background, _ in pairs(L.Backgrounds) do
+        table.insert(backgroundNames, GetString(backgroundPrefix, background))
+    end
+
+    table.insert(backgroundNames, " ")
+
+    for border, _ in pairs(L.BORDERS) do
+        table.insert(borderNames, GetString(borderPrefix, border))
+    end
+
+    table.insert(borderNames, " ")
+
+    return backgroundNames, borderNames
+end
+
 ---Get the key for a specific value in a table
 ---@param t table   the table to search
 ---@param v any     the value to find
@@ -321,6 +344,39 @@ function L.GetFirstWord(text)
     end
 
     return text:sub(1, space - 1)
+end
+
+---create a font definition
+---@param name string   the font name from the L.Fonts list
+---@param size? number  the font size, defaults to 18
+---@param style? string  the font style, default to none
+---@return string
+function L.GetFont(name, size, style)
+    local typeface = L.Fonts[name]
+    local fontstyle = style and L.FontStyles[style] or ""
+
+    if (typeface) then
+        return string.format("%s|%s%s", typeface, size or 18, fontstyle)
+    end
+
+    return ""
+end
+
+---create dropdown compatible list of font and style names
+---@return table
+---@return table
+function L.GetFontNamesAndStyles()
+    local fontNames, fontStyles = {}, {}
+
+    for font, _ in pairs(L.Fonts) do
+        table.insert(fontNames, font)
+    end
+
+    for style, _ in pairs(L.FontStyles) do
+        table.insert(fontStyles, style)
+    end
+
+    return fontNames, fontStyles
 end
 
 ---generate an icon texture with optional colour that can be used within a string
@@ -386,6 +442,25 @@ function L.GetNearest(input, factor)
     end
 
     return result
+end
+
+---create a list of sound options for a dropdown control as well as the related lookup for the actual sound
+---@return table
+---@return table
+function L.GetSoundDropdownOptions()
+    local soundChoices = {}
+    local soundLookup = {}
+
+    for _, v in ipairs(L.Sounds) do
+        if (_G.SOUNDS[v] ~= nil) then
+            local soundName = _G.SOUNDS[v]:gsub("_", " ")
+
+            table.insert(soundChoices, soundName)
+            soundLookup[soundName] = _G.SOUNDS[v]
+        end
+    end
+
+    return soundChoices, soundLookup
 end
 
 ---from https://wowwiki-archive.fandom.com/wiki/USERAPI_ColorGradient
