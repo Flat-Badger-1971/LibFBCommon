@@ -352,6 +352,10 @@ end
 ---@param style? string  the font style, default to none
 ---@return string
 function L.GetFont(name, size, style)
+    if (name == "Standard") then
+        name = "Default"
+    end
+
     local typeface = L.Fonts[name]
     local fontstyle = style and L.FontStyles[style] or ""
 
@@ -363,13 +367,18 @@ function L.GetFont(name, size, style)
 end
 
 ---create dropdown compatible list of font and style names
+---@param useStandard boolean   use "Standard" instead of "Default" as the font name
 ---@return table
 ---@return table
-function L.GetFontNamesAndStyles()
+function L.GetFontNamesAndStyles(useStandard)
     local fontNames, fontStyles = {}, {}
 
     for font, _ in pairs(L.Fonts) do
-        table.insert(fontNames, font)
+        if (useStandard and font == "Default") then
+            table.insert(fontNames, "Standard")
+        else
+            table.insert(fontNames, font)
+        end
     end
 
     for style, _ in pairs(L.FontStyles) do
