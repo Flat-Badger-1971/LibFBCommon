@@ -304,7 +304,7 @@ function L.GetBackgroundsAndBorders(backgroundPrefix, borderPrefix)
 
     table.insert(backgroundNames, " ")
 
-    for border, _ in pairs(L.BORDERS) do
+    for border, _ in pairs(L.Borders) do
         table.insert(borderNames, GetString(borderPrefix, border))
     end
 
