@@ -150,6 +150,30 @@ function L.CountElements(t)
     return count
 end
 
+---remove duplicate values from a table
+---@param t table
+---@return table
+function L.RemoveDuplicates(t)
+    local set = {}
+    local final = {}
+
+    for _, val in pairs(t) do
+        if not set[val] then
+            set[val] = 1
+        else
+            set[val] = set[val] + 1
+        end
+    end
+
+    for k, v in pairs(set) do
+        if v == 1 then
+            final[#final + 1] = k
+        end
+    end
+
+    return final
+end
+
 ---deepcopy a table
 ---https://gist.github.com/tylerneylon/81333721109155b2d244
 ---@param obj table     the table to deep copy
@@ -174,6 +198,40 @@ function L.DeepCopy(obj, seen)
     end
 
     return setmetatable(res, getmetatable(obj))
+end
+
+---Damerau-Levenshtein distance
+---calculates the minimum number of operations needed to transform one string into another
+---@param s1 string
+---@param s2 string
+---@return number
+function L.Distance(s1, s2)
+    local lenS1, lenS2 = #s1, #s2
+    local cost = {}
+
+    for i = 0, lenS1 do
+        cost[i] = {}
+        cost[i][0] = i
+    end
+
+    for j = 0, lenS2 do
+        cost[0][j] = j
+    end
+
+    for i = 1, lenS1 do
+        for j = 1, lenS2 do
+            local deletion = cost[i - 1][j] + 1
+            local insertion = cost[i][j - 1] + 1
+            local substitution = cost[i - 1][j - 1] + (s1:sub(i, i) == s2:sub(j, j) and 0 or 1)
+            cost[i][j] = math.min(deletion, insertion, substitution)
+
+            if i > 1 and j > 1 and s1:sub(i, i) == s2:sub(j - 1, j - 1) and s1:sub(i - 1, i - 1) == s2:sub(j, j) then
+                cost[i][j] = math.min(cost[i][j], cost[i - 2][j - 2] + 1)
+            end
+        end
+    end
+
+    return cost[lenS1][lenS2]
 end
 
 ---filter out values from a table
