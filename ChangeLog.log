@@ -1,3 +1,6 @@
+[color=#ff9900][b]Version: 1.0.3 ---------------[/b][/color]
+Change blank value in background and borders to "None"
+
 [color=#ff9900][b]Version: 1.0.2 ---------------[/b][/color]
 Damerau-Levenshtein distance calculation added to utilities
 Table deduplication added

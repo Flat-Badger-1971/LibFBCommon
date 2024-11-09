@@ -355,18 +355,19 @@ end
 ---@return table
 function L.GetBackgroundsAndBorders(backgroundPrefix, borderPrefix)
     local backgroundNames, borderNames = {}, {}
+    local none = L.Format(_G.SI_ANTIALIASINGTYPE0)
 
     for background, _ in pairs(L.Backgrounds) do
         table.insert(backgroundNames, GetString(backgroundPrefix, background))
     end
 
-    table.insert(backgroundNames, " ")
+    table.insert(backgroundNames, none)
 
     for border, _ in pairs(L.Borders) do
         table.insert(borderNames, GetString(borderPrefix, border))
     end
 
-    table.insert(borderNames, " ")
+    table.insert(borderNames, none)
 
     return backgroundNames, borderNames
 end
