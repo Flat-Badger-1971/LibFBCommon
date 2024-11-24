@@ -194,7 +194,7 @@ function L.DeepCopy(obj, seen)
     s[obj] = res
 
     for k, v in pairs(obj) do
-        res[L.deepCopy(k, s)] = L.deepCopy(v, s)
+        res[L.DeepCopy(k, s)] = L.DeepCopy(v, s)
     end
 
     return setmetatable(res, getmetatable(obj))
