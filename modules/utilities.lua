@@ -57,8 +57,8 @@ end
 local itemColours = {}
 
 do
-    for quality = _G.ITEM_DISPLAY_QUALITY_TRASH, _G.ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE do
-        itemColours[quality] = {GetInterfaceColor(_G.INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, quality)}
+    for quality = ITEM_DISPLAY_QUALITY_TRASH, ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE do
+        itemColours[quality] = {GetInterfaceColor(INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, quality)}
     end
 end
 
@@ -105,7 +105,7 @@ function L.ColourToQuality(r, g, b)
         end
     end
 
-    return _G.ITEM_DISPLAY_QUALITY_NORMAL
+    return ITEM_DISPLAY_QUALITY_NORMAL
 end
 
 ---basic equality check for two colour values
@@ -355,7 +355,7 @@ end
 ---@return table
 function L.GetBackgroundsAndBorders(backgroundPrefix, borderPrefix)
     local backgroundNames, borderNames = {}, {}
-    local none = L.Format(_G.SI_ANTIALIASINGTYPE0)
+    local none = L.Format(SI_ANTIALIASINGTYPE0)
 
     for background, _ in pairs(L.Backgrounds) do
         table.insert(backgroundNames, GetString(backgroundPrefix, background))
@@ -563,7 +563,7 @@ function L.IsCarryingStolenItems()
         function(itemdata)
             return itemdata.stolen == true
         end,
-        _G.BAG_BACKPACK
+        BAG_BACKPACK
     )
 
     return #filteredItems > 0, filteredItems
@@ -574,7 +574,7 @@ end
 function L.IsInPvPZone()
     local mapContentType = GetMapContentType()
 
-    return (mapContentType == _G.MAP_CONTENT_AVA or mapContentType == _G.MAP_CONTENT_BATTLEGROUND)
+    return (mapContentType == MAP_CONTENT_AVA or mapContentType == MAP_CONTENT_BATTLEGROUND)
 end
 
 ---join all values in a table into a comma separated string
@@ -595,7 +595,7 @@ end
 ---@param name string   optional name for the generated link
 ---@return string
 function L.MakeItemLink(itemId, name)
-    return ZO_LinkHandler_CreateLink(name or "", nil, _G.ITEM_LINK_TYPE, itemId, unpack(L.Repeat(0, 20)))
+    return ZO_LinkHandler_CreateLink(name or "", nil, ITEM_LINK_TYPE, itemId, unpack(L.Repeat(0, 20)))
 end
 
 ---merge two tables into one
@@ -689,7 +689,7 @@ end
 ---@param lifespan number
 ---@param sound string
 function L.ScreenAnnounce(header, message, icon, lifespan, sound)
-    local messageParams = CENTER_SCREEN_ANNOUNCE:CreateMessageParams(_G.CSA_CATEGORY_LARGE_TEXT)
+    local messageParams = CENTER_SCREEN_ANNOUNCE:CreateMessageParams(CSA_CATEGORY_LARGE_TEXT)
 
     if (sound ~= "none") then
         messageParams:SetSound(sound or "Justice_NowKOS")
@@ -697,7 +697,7 @@ function L.ScreenAnnounce(header, message, icon, lifespan, sound)
 
     messageParams:SetText(header or "Test Header", message or "Test Message")
     messageParams:SetLifespanMS(lifespan or 6000)
-    messageParams:SetCSAType(_G.CENTER_SCREEN_ANNOUNCE_TYPE_SYSTEM_BROADCAST)
+    messageParams:SetCSAType(CENTER_SCREEN_ANNOUNCE_TYPE_SYSTEM_BROADCAST)
 
     if (icon) then
         messageParams:SetIconData(icon)
@@ -863,6 +863,7 @@ function L.ToPercent(qty, total, addSign)
     if (total and (total > 0) and qty) then
         local pc = tonumber(qty) / tonumber(total)
         local pcf = math.floor(pc * 100)
+
         if (addSign) then
             return tostring(pcf) .. "%"
         else
