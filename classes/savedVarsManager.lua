@@ -28,10 +28,18 @@ function manager:New(varFileName, defaults, commonDefaults, accountWide, account
             end
 
             -- assume anything that's not part of the main class is an attempt to read a saved variable
+            if (self._loggingOut) then
+                return nil
+            end
+
             local vars = rawget(t, "_vars")
 
             if (vars) then
-                return vars[key]
+                local ok, result = pcall(function() return vars[key] end)
+
+                if (ok) then
+                    return result
+                end
             end
         end,
         __newindex = function(t, key, value)
@@ -258,6 +266,10 @@ function manager:Initialise(varFileName, defaults, commonDefaults, accountWide, 
     self._commonDefaults = commonDefaults
     self._version = 1
     self._useCharacterSettings = self:HasCharacterSettings()
+
+    -- handle logout/quit
+    EVENT_MANAGER:RegisterForEvent(L.Name, EVENT_PLAYER_LOGOUT, function() self._loggingOut = true end)
+    EVENT_MANAGER:RegisterForEvent(L.Name, EVENT_PLAYER_QUIT, function() self._loggingOut = true end)
 
     self:LoadSavedVars()
 end

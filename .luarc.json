@@ -1,12 +1,9 @@
 {
     "diagnostics.disable": [
-        "assign-type-mismatch",
+        "undefined-global",
         "deprecated",
-        "lowercase-global",
-        "param-type-mismatch",
-        "redundant-return-value",
-        "return-type-mismatch",
+        "need-check-nil",
         "undefined-field",
-        "undefined-global"
+        "lowercase-global"
     ]
 }

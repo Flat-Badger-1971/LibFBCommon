@@ -1,5 +1,16 @@
 local L = _G.LibFBCommon
 
+-- group broadcasting
+L.PROTOCOL_ID = 50
+
+--- @enum ADDON_ID_ENUM
+L.ADDON_ID_ENUM = {
+    AH = 1,
+    BS = 2,
+    FB = 3,
+    FOB = 4
+}
+
 -- colours
 L.Blue = L.Colour("3a92ff")
 L.Cyan = L.Colour("34a4eb")
