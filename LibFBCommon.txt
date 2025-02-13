@@ -5,6 +5,7 @@
 ## AddOnVersion: 1007
 ## Version: 1.0.7
 ## IsLibrary: true
+## OptionalDependsOn: LibGroupBroadcast>=71
 
 # DISCLAIMER:
 #

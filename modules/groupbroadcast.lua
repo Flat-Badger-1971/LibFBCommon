@@ -1,17 +1,39 @@
+local DEBUG = (GetDisplayName() == "@Flat-Badger") and true
 local L = _G.LibFBCommon
 local LGB = _G.LibGroupBroadcast
 local protocol
 local handler
+local invertedEnum = {}
+local ids = L.ADDON_ID_ENUM
+local enumValues = { ID.AH, ID.BS, ID.FB, ID.FOB }
+
+do
+    -- invert the enum to ease lookup values
+    for k, v in pairs(L.ADDON_ID_ENUM) do
+        invertedEnum[v] = k
+    end
+end
+
+local function p(text)
+    if (DEBUG) then
+        d(text)
+    end
+end
 
 -- update 45/46 code for LibGroupBroadcast
--- Fire addon specific callbacks when data is received
+--- Fire addon specific callbacks when data is received
+--- @param unitTag string    The unit tag of the player who sent the data
+--- @param data table        The data received
 local function onData(unitTag, data)
+    p("Data received from " .. unitTag .. " : " .. data.id .. ":" .. data.class .. ":" .. data.data)
+
     if (L.DataShareRegister[data.id]) then
+        p("Calling callback function for " .. invertedEnum[data.id])
         L.DataShareRegister[data.id](unitTag, data)
     end
 end
 
--- define the protocol for data sharing
+--- Define the protocol for data sharing
 local function declareProtocol()
     if (handler) then return end
 
@@ -32,7 +54,7 @@ local function declareProtocol()
             LGB.CreateStringField("sdata", {
                 minLength = 1,
                 maxLength = 100
-            }),
+            })
         }, {
             maxNumVariants = 5
         }))
@@ -42,18 +64,23 @@ local function declareProtocol()
         isRelevantInCombat = true,
         replaceQueuedMessages = false,
     })
-
-    assert(not finalised, "LibGroupBroadcast finalisation failed")
+    d("finalised:" .. (tostring(finalised) or "nil"))
+    assert(finalised, "LibGroupBroadcast finalisation failed")
 end
 
 --- Register an addon for data sharing by adding its id and callback to the data sharing register
 --- @param id ADDON_ID_ENUM     The id of the addon
 --- @param callback function    The callback function to be called when data is received
+--- @return boolean             Returns true if registration is successful
 function L.RegisterForDataSharing(id, callback)
-    assert(not L.LGB, "LibGroupBroadcast not loaded")
+    assert(LGB ~= nil, "LibGroupBroadcast not loaded")
     declareProtocol()
     L.DataShareRegister = L.DataShareRegister or {}
     L.DataShareRegister[id] = callback
+
+    p("Registered " .. invertedEnum[id] .. " for data sharing")
+
+    return true
 end
 
 --- Share a value
@@ -63,9 +90,13 @@ end
 function L.Share(id, class, value)
     if (protocol) then
         if (type(value) == "string") then
-            protocol:Send({ id = id, class = class, sdata = value })
+            -- protocol:Send({ id = id, class = class, sdata = value })
+            protocol:Send({ id = id, class = class, data = { sdata = value } })
         elseif (type(value) == "number") then
-            protocol:Send({ id = id, class = class, ndata = value })
+            -- protocol:Send({ id = id, class = class, ndata = value })
+            protocol:Send({ id = id, class = class, data = { ndata = value } })
         end
+
+        p("Shared " .. invertedEnum[id] .. " : " .. class .. ":" .. value)
     end
 end
