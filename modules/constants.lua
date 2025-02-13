@@ -5,10 +5,10 @@ L.PROTOCOL_ID = 50
 
 --- @enum ADDON_ID_ENUM
 L.ADDON_ID_ENUM = {
-    AH = 1,
-    BS = 2,
-    FB = 3,
-    FOB = 4
+    AH = 0,
+    BS = 1,
+    FB = 2,
+    FOB = 3
 }
 
 -- colours
