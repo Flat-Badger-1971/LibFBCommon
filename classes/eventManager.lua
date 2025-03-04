@@ -77,7 +77,7 @@ end
 function e:RegisterForEvent(event, func)
     if (self:NeedsRegistration(event, func)) then
         EVENT_MANAGER:RegisterForEvent(
-        self.addonName,
+            self.addonName,
             event,
             function(...)
                 self:CallEventFunctions(...)

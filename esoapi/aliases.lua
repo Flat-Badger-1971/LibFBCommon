@@ -1,0 +1,12 @@
+--- @meta
+--- @diagnostic disable
+
+--- @alias bool boolean
+--- @alias Event integer
+--- @alias id64 integer
+--- @alias integer53 integer
+--- @alias ItemSetCollectionSlot_id64 integer
+--- @alias layout_measurement integer
+--- @alias luaindex integer
+--- @alias textureName string
+--- @alias void nil

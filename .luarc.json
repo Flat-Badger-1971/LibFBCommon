@@ -1,12 +1,14 @@
 {
-    "diagnostics.disable": [
-        "assign-type-mismatch",
-        "deprecated",
-        "lowercase-global",
-        "param-type-mismatch",
-        "redundant-return-value",
-        "return-type-mismatch",
-        "undefined-field",
-        "undefined-global"
+    "diagnostics": {
+        "disable": [
+            "param-type-mismatch"
+        ],
+        "libraryFiles": "Disable",
+        "neededFileStatus": {
+            "codestyle-check": "Any"
+        }
+    },
+    "workspace.library": [
+        "./esoapi/esoapi.lua"
     ]
 }

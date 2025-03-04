@@ -115,5 +115,4 @@ function t:EnableUpdates()
     end
 end
 
-
 L.TimerManager = t

@@ -56,13 +56,13 @@ L.Backgrounds = {
 }
 
 L.Borders = {
-    [1] = {"/esoui/art/worldmap/worldmap_frame_edge.dds", 128, 16},
-    [2] = {"/esoui/art/crafting/crafting_tooltip_glow_edge_blue64.dds", 256, 8},
-    [3] = {"/esoui/art/crafting/crafting_tooltip_glow_edge_gold64.dds", 256, 8},
-    [4] = {"/esoui/art/crafting/crafting_tooltip_glow_edge_red64.dds", 256, 8},
-    [5] = {"/esoui/art/chatwindow/gamepad/gp_hud_chatwindowbg_edge.dds", 512, 4},
-    [6] = {"/esoui/art/interaction/conversationborder.dds", 128, 8},
-    [7] = {"/esoui/art/market/market_highlightedge16.dds", 128, 16}
+    [1] = { "/esoui/art/worldmap/worldmap_frame_edge.dds", 128, 16 },
+    [2] = { "/esoui/art/crafting/crafting_tooltip_glow_edge_blue64.dds", 256, 8 },
+    [3] = { "/esoui/art/crafting/crafting_tooltip_glow_edge_gold64.dds", 256, 8 },
+    [4] = { "/esoui/art/crafting/crafting_tooltip_glow_edge_red64.dds", 256, 8 },
+    [5] = { "/esoui/art/chatwindow/gamepad/gp_hud_chatwindowbg_edge.dds", 512, 4 },
+    [6] = { "/esoui/art/interaction/conversationborder.dds", 128, 8 },
+    [7] = { "/esoui/art/market/market_highlightedge16.dds", 128, 16 }
 }
 
 -- alert sounds

@@ -2,8 +2,8 @@
 ## Description: Common functions used with addons created by Flat Badger
 ## Author: Flat Badger
 ## APIVersion: 101044
-## AddOnVersion: 1005
-## Version: 1.0.5
+## AddOnVersion: 1006
+## Version: 1.0.6
 ## IsLibrary: true
 
 # DISCLAIMER:
