@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "diagnostics": {
         "disable": [
             "param-type-mismatch"
@@ -10,5 +11,13 @@
     },
     "workspace.library": [
         "./esoapi/esoapi.lua"
+=======
+    "diagnostics.disable": [
+        "undefined-global",
+        "deprecated",
+        "need-check-nil",
+        "undefined-field",
+        "lowercase-global"
+>>>>>>> 246ba7b (broadcasting setup)
     ]
 }
