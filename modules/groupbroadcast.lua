@@ -5,7 +5,6 @@ local protocol
 local handler
 local invertedEnum = {}
 local ids = L.ADDON_ID_ENUM
-local enumValues = { ID.AH, ID.BS, ID.FB, ID.FOB }
 
 do
     -- invert the enum to ease lookup values

@@ -312,6 +312,7 @@ function L.FormatTime(format, timeString, tamrielTime)
 
     time = time:gsub("HH", hours)
     time = time:gsub("H", tostring(hoursNoLead))
+    time = time:gsub("H", tostring(hoursNoLead))
     time = time:gsub("hh", hours12)
     time = time:gsub("h", hours12NoLead)
     time = time:gsub("m", minutes)
@@ -540,6 +541,7 @@ end
 function L.Gradient(perc, ...)
     if perc >= 1 then
         local r, g, b = select(select("#", ...) - 2, ...)
+        return r or 0, g or 0, b or 0
         return r or 0, g or 0, b or 0
     elseif perc <= 0 then
         local r, g, b = ...
@@ -851,6 +853,7 @@ end
 ---convert the input number into an integer
 ---@param num number
 ---@return integer?
+---@return integer?
 function L.ToInt(num)
     return tonumber(string.format("%.0f", num))
 end
@@ -858,6 +861,7 @@ end
 ---get a percentage value rounded down
 ---@param qty number    quantity value
 ---@param total number  maximum value
+---@return number | string
 ---@return number | string
 function L.ToPercent(qty, total, addSign)
     if (total and (total > 0) and qty) then
@@ -888,6 +892,9 @@ end
 ---@param stringValue string string value to trim
 ---@return string
 function L.Trim(stringValue)
+    local trimmed = stringValue:gsub("^%s*(.-)%s*$", "%1")
+
+    return trimmed
     local trimmed = stringValue:gsub("^%s*(.-)%s*$", "%1")
 
     return trimmed
