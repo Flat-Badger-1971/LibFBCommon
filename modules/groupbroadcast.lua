@@ -18,13 +18,13 @@ local function declareProtocol()
     handler = LGB:RegisterHandler(L.Name)
     protocol = handler
         :DeclareProtocol(L.PROTOCOL_ID, L.Name)
-        :AddField(CreateEnumField("id", L.ADDON_ID_ENUM))
-        :AddField(CreateNumericField("class", {
+        :AddField(LGB.CreateEnumField("id", L.ADDON_ID_ENUM))
+        :AddField(LGB.CreateNumericField("class", {
             numBits = 4,
             minValue = 0,
             maxValue = 15
         }))
-        :AddField(CreateVariantField("data", {
+        :AddField(LGB.CreateVariantField("data", {
             LGB.CreateNumericField("ndata", {
                 minValue = 0,
                 maxValue = 4999999

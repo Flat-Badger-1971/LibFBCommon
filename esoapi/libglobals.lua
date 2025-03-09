@@ -18,8 +18,14 @@ SHARED_INVENTORY = {}
 --- @field AddMessageWithParams fun(self:table, messageParams:table):void
 CENTER_SCREEN_ANNOUNCE = {}
 
+--- @type table
+ADDON_ID_ENUM = {}
+
 INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS = 1
 ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE = 6
 ITEM_DISPLAY_QUALITY_NORMAL = 1
 ITEM_DISPLAY_QUALITY_TRASH = 0
 ITEM_LINK_TYPE = "item"
+
+
+LibGroupBroadcast = {}
