@@ -650,6 +650,7 @@ function ZO_CircularBuffer:GetEnumerator() end
 --- @class ZO_ColorDef: ZO_Object
 ZO_ColorDef = {}
 
+--- @return ZO_ColorDef
 function ZO_ColorDef:New(r, g, b, a) end
 
 function ZO_ColorDef.FromInterfaceColor(colorType, fieldValue) end
@@ -674,6 +675,7 @@ function ZO_ColorDef:ToHex() end
 
 function ZO_ColorDef:ToARGBHex() end
 
+--- @return string
 function ZO_ColorDef:Colorize(text) end
 
 function ZO_ColorDef:Lerp(colorToLerpTorwards, amount) end
@@ -1052,6 +1054,7 @@ function ZO_LinkHandler_OnLinkMouseUp(link, button, control) end
 
 function ZO_LinkHandler_CreateLinkWithFormat(text, color, linkType, linkStyle, stringFormat, ...) end
 
+--- @return string
 function ZO_LinkHandler_CreateLink(text, color, linkType, ...) end
 
 function ZO_LinkHandler_CreateLinkWithoutBrackets(text, color, linkType, ...) end

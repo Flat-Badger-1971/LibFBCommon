@@ -29,3 +29,5 @@ ITEM_LINK_TYPE = "item"
 
 
 LibGroupBroadcast = {}
+
+SI_ANTIALIASINGTYPE0 = 0
