@@ -1,29 +1,29 @@
 local L = _G.LibFBCommon
 
----add number separators  --- CHECK: ZO_CommaDelimitNumber(number)
+---add number separators
 ---@param number number     the number needing separators
 ---@param grouping number   number of digits to group by, e.g 3
 ---@param separator string  the number separator to use, e.g ,
----@return string | number
+---@return string|number
 function L.AddSeparators(number, grouping, separator)
     if type(number) ~= "number" or number < 0 or number == 0 or not number then
         return number
     else
         local t = {}
-        local int = zo_floor(number)
+        local int = math.floor(number)
 
         if int == 0 then
             t[#t + 1] = 0
         else
             local digits = math.log10(int)
-            local segments = zo_floor(digits / grouping)
+            local segments = math.floor(digits / grouping)
             local groups = 10 ^ grouping
 
-            t[#t + 1] = zo_floor(int / groups ^ segments)
+            t[#t + 1] = math.floor(int / groups ^ segments)
 
             for i = segments - 1, 0, -1 do
                 t[#t + 1] = separator
-                t[#t + 1] = zo_strformat(("%0" .. grouping .. "d"), zo_floor(int / groups ^ i) % groups)
+                t[#t + 1] = ("%0" .. grouping .. "d"):format(math.floor(int / groups ^ i) % groups)
             end
         end
 
@@ -40,8 +40,8 @@ function L.BuildList(listInfo)
 
     for _, info in ipairs(listInfo) do
         if (type(info) == "string") then
-            local comma = zo_strfind(info, ",")
-            local s, e = tonumber(zo_strsub(info, 1, comma - 1)), tonumber(zo_strsub(info, comma + 1))
+            local comma = info:find(",")
+            local s, e = tonumber(info:sub(1, comma - 1)), tonumber(info:sub(comma + 1))
 
             for i = s, e do
                 list[i] = true
@@ -62,7 +62,7 @@ do
     end
 end
 
----clear *any* table : CHECK: ZO_ClearTable(table)
+---clear *any* table
 ---@param t table
 function L.Clear(t)
     for k in next, t do
@@ -97,8 +97,8 @@ end
 ---@return number
 function L.ColourToQuality(r, g, b)
     for quality, rgba in pairs(itemColours) do
-        local rc, gc, bc = zo_floor(rgba[1] * 100), zo_floor(rgba[2] * 100), zo_floor(rgba[3] * 100)
-        local ri, gi, bi = zo_floor(r * 100), zo_floor(g * 100), zo_floor(b * 100)
+        local rc, gc, bc = math.floor(rgba[1] * 100), math.floor(rgba[2] * 100), math.floor(rgba[3] * 100)
+        local ri, gi, bi = math.floor(r * 100), math.floor(g * 100), math.floor(b * 100)
 
         if (rc == ri and gc == gi and bc == bi) then
             return quality
@@ -118,7 +118,7 @@ function L.CompareColours(c1, c2)
     -- just compare colours down to 3 decimal places
     for _, colour in ipairs(colours) do
         for idx, value in pairs(colour) do
-            local rounded = tonumber(zo_strformat("%.3g", value))
+            local rounded = tonumber(string.format("%.3g", value))
 
             colour[idx] = rounded
         end
@@ -132,7 +132,7 @@ end
 ---@param searchFor string  the value to find
 ---@return unknown
 function L.Count(input, searchFor)
-    local _, count = zo_strgsub(input, searchFor, "")
+    local _, count = input:gsub(searchFor, "")
 
     return count
 end
@@ -174,7 +174,7 @@ function L.RemoveDuplicates(t)
     return final
 end
 
----deepcopy a table CHECK: ZO_DeepTableCopy(source, dest)
+---deepcopy a table
 ---https://gist.github.com/tylerneylon/81333721109155b2d244
 ---@param obj table     the table to deep copy
 ---@param seen table    (internal use only, ignore)
@@ -222,11 +222,11 @@ function L.Distance(s1, s2)
         for j = 1, lenS2 do
             local deletion = cost[i - 1][j] + 1
             local insertion = cost[i][j - 1] + 1
-            local substitution = cost[i - 1][j - 1] + (zo_strsub(s1, i, i) == zo_strsub(s2, j, j) and 0 or 1)
+            local substitution = cost[i - 1][j - 1] + (s1:sub(i, i) == s2:sub(j, j) and 0 or 1)
             cost[i][j] = math.min(deletion, insertion, substitution)
 
-            if i > 1 and j > 1 and zo_strsub(s1, i, i) == zo_strsub(s2, j - 1, j - 1) and zo_strsub(s1, i - 1, i - 1) == zo_strsub(s2, j, j) then
-                cost[i][j] = zo_min(cost[i][j], cost[i - 2][j - 2] + 1)
+            if i > 1 and j > 1 and s1:sub(i, i) == s2:sub(j - 1, j - 1) and s1:sub(i - 1, i - 1) == s2:sub(j, j) then
+                cost[i][j] = math.min(cost[i][j], cost[i - 2][j - 2] + 1)
             end
         end
     end
@@ -275,7 +275,6 @@ function L.FormatTime(format, timeString, tamrielTime)
     local hours, minutes, seconds
 
     if (tamrielTime) then
-        --- @diagnostic disable-next-line: undefined-field
         hours, minutes, seconds = tamrielTime.hour, tamrielTime.minute, tamrielTime.second
 
         if (tostring(minutes):len() == 1) then
@@ -287,7 +286,7 @@ function L.FormatTime(format, timeString, tamrielTime)
         end
     else
         timeString = timeString or GetTimeString()
-        hours, minutes, seconds = zo_strmatch(timeString, "([^%:]+):([^%:]+):([^%:]+)")
+        hours, minutes, seconds = timeString:match("([^%:]+):([^%:]+):([^%:]+)")
     end
 
     local hoursNoLead = tonumber(hours) -- hours without leading zero
@@ -311,14 +310,14 @@ function L.FormatTime(format, timeString, tamrielTime)
     -- create new one
     local time = format
 
-    time = zo_strgsub(time, "HH", hours)
-    time = zo_strgsub(time, "H", tostring(hoursNoLead))
-    time = zo_strgsub(time, "hh", hours12)
-    time = zo_strgsub(time, "h", hours12NoLead)
-    time = zo_strgsub(time, "m", minutes)
-    time = zo_strgsub(time, "s", seconds)
-    time = zo_strgsub(time, "A", pUp)
-    time = zo_strgsub(time, "a", pLow)
+    time = time:gsub("HH", hours)
+    time = time:gsub("H", hoursNoLead)
+    time = time:gsub("hh", hours12)
+    time = time:gsub("h", hours12NoLead)
+    time = time:gsub("m", minutes)
+    time = time:gsub("s", seconds)
+    time = time:gsub("A", pUp)
+    time = time:gsub("a", pLow)
 
     return time
 end
@@ -337,11 +336,11 @@ function L.GetAddonVersion(addonName)
 
         if (name == addonName) then
             version = tostring(manager:GetAddOnVersion(addon))
-            local major = tonumber(zo_strsub(version, 1, 1))
-            local minor = tonumber(zo_strsub(version, 2, 2))
-            local revision = tonumber(zo_strsub(version, 3))
+            local major = tonumber(version:sub(1, 1))
+            local minor = tonumber(version:sub(2, 2))
+            local revision = tonumber(version:sub(3))
 
-            version = zo_strformat("%d.%d.%d", major, minor, revision)
+            version = string.format("%d.%d.%d", major, minor, revision)
             break
         end
     end
@@ -393,17 +392,17 @@ end
 ---@param text string
 ---@return string
 function L.GetFirstWord(text)
-    local space = zo_strfind(text, " ")
+    local space = text:find(" ")
 
     if (not space) then
-        space = zo_strfind(text, "-")
+        space = text:find("-")
 
         if (not space) then
             return text
         end
     end
 
-    return zo_strsub(text, 1, space - 1)
+    return text:sub(1, space - 1)
 end
 
 ---create a font definition
@@ -420,7 +419,7 @@ function L.GetFont(name, size, style)
     local fontstyle = style and L.FontStyles[style] or ""
 
     if (typeface) then
-        return zo_strformat("%s|%s%s", typeface, size or 18, fontstyle)
+        return string.format("%s|%s%s", typeface, size or 18, fontstyle)
     end
 
     return ""
@@ -462,9 +461,9 @@ function L.GetIconTexture(path, colour, width, height)
 
     if (colour) then
         if (type(colour) == "table") then
-            texture = colour:Colorize(zo_strgsub(texture, "|t$", ":inheritColor|t"))
+            texture = colour:Colorize(texture:gsub("|t$", ":inheritColor|t"))
         else
-            texture = zo_strformat("|c%s%s|r", colour, zo_strgsub(texture, "|t$", ":inheritColor|t"))
+            texture = string.format("|c%s%s|r", colour, texture:gsub("|t$", ":inheritColor|t"))
         end
     end
 
@@ -522,7 +521,7 @@ function L.GetSoundDropdownOptions()
 
     for _, v in ipairs(L.Sounds) do
         if (_G.SOUNDS[v] ~= nil) then
-            local soundName = zo_strgsub(_G.SOUNDS[v], "_", " ")
+            local soundName = _G.SOUNDS[v]:gsub("_", " ")
 
             table.insert(soundChoices, soundName)
             soundLookup[soundName] = _G.SOUNDS[v]
@@ -541,7 +540,7 @@ end
 function L.Gradient(perc, ...)
     if perc >= 1 then
         local r, g, b = select(select("#", ...) - 2, ...)
-        return r or 0, g or 0, b or 0
+        return r, g, b
     elseif perc <= 0 then
         local r, g, b = ...
         return r, g, b
@@ -599,7 +598,7 @@ function L.MakeItemLink(itemId, name)
     return ZO_LinkHandler_CreateLink(name or "", nil, ITEM_LINK_TYPE, itemId, unpack(L.Repeat(0, 20)))
 end
 
----merge two tables into one CHECK: ZO_CombineNumericallyIndexedTables(dest, ...)
+---merge two tables into one
 ---@param t1 table
 ---@param t2 table
 ---@return table
@@ -624,7 +623,7 @@ end
 function L.PartialMatch(inputString, compareList)
     for key, value in pairs(compareList) do
         if (key ~= "") then
-            if (zo_strfind(zo_strlower(inputString), zo_strlower(key))) then
+            if (inputString:lower():find(key:lower())) then
                 return value
             end
         end
@@ -665,11 +664,11 @@ function L.ScanBuffs(buffList, timeFormatter, nameColour)
                 local remaining = timeEnding - timeNow / 1000
                 local formattedTime = timeFormatter(remaining)
                 local ttt =
-                    zo_strformat(
+                    string.format(
                         "%s%s%s",
                         L.Colour(nameColour or "f9f9f9"):Colorize(L.Format(buffName)),
                         L.LF,
-                        L.Format(GetAbilityDescription(abilityId, nil, "player"))
+                        L.Format(GetAbilityDescription(abilityId))
                     )
 
                 table.insert(
@@ -713,7 +712,7 @@ end
 ---@return boolean
 function L.Search(values, searchFor)
     for _, value in ipairs(values) do
-        if (zo_strfind(searchFor, value)) then
+        if (searchFor:find(value)) then
             return true
         end
     end
@@ -725,10 +724,10 @@ end
 ---@param secondsValue number
 ---@return string
 function L.SecondsToMinutes(secondsValue)
-    local minutes = zo_floor(secondsValue / 60)
+    local minutes = math.floor(secondsValue / 60)
     local seconds = secondsValue - (minutes * 60)
 
-    return zo_strformat("%d:%02d", minutes, seconds)
+    return string.format("%d:%02d", minutes, seconds)
 end
 
 ---format seconds into human readable time
@@ -755,7 +754,7 @@ function L.SecondsToTime(
     secondsNoDaysFormat,
     withSecondsFormat)
     local time = ""
-    local days = zo_floor(seconds / 86400)
+    local days = math.floor(seconds / 86400)
     local remaining = seconds
     local hideWhenZeroDays = hideDaysWhenZero == true and days == 0
 
@@ -765,19 +764,19 @@ function L.SecondsToTime(
         remaining = seconds - (days * 86400)
     end
 
-    local hours = zo_floor(remaining / 3600)
+    local hours = math.floor(remaining / 3600)
 
     if (hours > 0) then
         remaining = remaining - (hours * 3600)
     end
 
-    local minutes = zo_floor(remaining / 60)
+    local minutes = math.floor(remaining / 60)
 
     if (minutes > 0) then
         remaining = remaining - (minutes * 60)
     end
 
-    remaining = zo_floor(remaining)
+    remaining = math.floor(remaining)
 
     if ((format or "01:12:04:10") ~= "01:12:04:10" and format ~= "01:12:04") then
         if (hideSeconds) then
@@ -795,17 +794,17 @@ function L.SecondsToTime(
         end
     else
         if (not hideDays) then
-            time = zo_strformat("%02d", days) .. ":"
+            time = string.format("%02d", days) .. ":"
         end
 
         if (not hideHours) then
-            time = time .. zo_strformat("%02d", hours) .. ":"
+            time = time .. string.format("%02d", hours) .. ":"
         end
 
-        time = time .. zo_strformat("%02d", minutes)
+        time = time .. string.format("%02d", minutes)
 
         if (not hideSeconds) then
-            time = time .. ":" .. zo_strformat("%02d", remaining)
+            time = time .. ":" .. string.format("%02d", remaining)
         end
     end
 
@@ -827,7 +826,7 @@ function L.Space(numberOfSpaces)
     local output = ""
 
     for _ = 1, numberOfSpaces do
-        output = zo_strformat("%s%s", output, " ")
+        output = string.format("%s%s", output, " ")
     end
 
     return output
@@ -842,7 +841,7 @@ function L.Split(s, delimiter)
 
     delimiter = delimiter or ","
 
-    for match in zo_strgmatch(s .. delimiter, "(.-)" .. delimiter) do
+    for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
         table.insert(result, match)
     end
 
@@ -851,19 +850,19 @@ end
 
 ---convert the input number into an integer
 ---@param num number
----@return integer?
+---@return integer
 function L.ToInt(num)
-    return tonumber(zo_strformat("%.0f", num))
+    return tonumber(string.format("%.0f", num))
 end
 
 ---get a percentage value rounded down
 ---@param qty number    quantity value
 ---@param total number  maximum value
----@return number | string
+---@return integer
 function L.ToPercent(qty, total, addSign)
     if (total and (total > 0) and qty) then
         local pc = tonumber(qty) / tonumber(total)
-        local pcf = zo_floor(pc * 100)
+        local pcf = math.floor(pc * 100)
 
         if (addSign) then
             return tostring(pcf) .. "%"
@@ -879,8 +878,8 @@ end
 ---@param text string
 ---@return string
 function L.ToSentenceCase(text)
-    local initial = zo_strlower(zo_strsub(text, 1, 1))
-    local rest = zo_strsub(text, 2)
+    local initial = text:sub(1, 1):upper()
+    local rest = text:sub(2)
 
     return initial .. rest
 end
@@ -889,7 +888,5 @@ end
 ---@param stringValue string string value to trim
 ---@return string
 function L.Trim(stringValue)
-    local trimmed = zo_strgsub(stringValue, "^%s*(.-)%s*$", "%1")
-
-    return trimmed
+    return stringValue:gsub("^%s*(.-)%s*$", "%1")
 end
