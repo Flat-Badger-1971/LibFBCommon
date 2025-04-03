@@ -1,6 +1,7 @@
-local L = _G.LibFBCommon
+local L = LibFBCommon
 local searchPath, setPath, simpleCopy
 
+--- @class SavedVarsManager:ZO_Object
 L.SavedVarsManager = ZO_Object:Subclass()
 local manager = L.SavedVarsManager
 
@@ -14,6 +15,7 @@ local manager = L.SavedVarsManager
 function manager:New(varFileName, defaults, commonDefaults, accountWide, accountWideTooltip)
     local managerObject = self:Subclass()
 
+    ---@diagnostic disable-next-line: undefined-field
     managerObject:Initialise(varFileName, defaults, commonDefaults, accountWide, accountWideTooltip)
 
     -- set default getter/setter for vars
@@ -50,6 +52,7 @@ function manager:New(varFileName, defaults, commonDefaults, accountWide, account
         end
     }
 
+    ---@diagnostic disable-next-line: return-type-mismatch
     return setmetatable(managerObject, metatable)
 end
 
@@ -77,7 +80,8 @@ function manager:ConvertToAccountSettings()
     if (self._useCharacterSettings) then
         local settings = simpleCopy(self._vars, true)
 
-        self._vars = ZO_SavedVars:NewAccountWide(self._rawTableName, self._version, nil, self._defaults, self._profile)
+        self._vars = ZO_SavedVars:NewAccountWide(self._rawTableName, self._version, nil, self._defaults, self._profile,
+            nil)
 
         for k, v in pairs(settings) do
             self._vars[k] = v
@@ -281,7 +285,8 @@ function manager:LoadSavedVars()
         self._vars =
             ZO_SavedVars:NewCharacterIdSettings(self._rawTableName, self._version, nil, self._defaults, self._profile)
     else
-        self._vars = ZO_SavedVars:NewAccountWide(self._rawTableName, self._version, nil, self._defaults, self._profile)
+        self._vars = ZO_SavedVars:NewAccountWide(self._rawTableName, self._version, nil, self._defaults, self._profile,
+            nil)
     end
 
     -- check common defaults

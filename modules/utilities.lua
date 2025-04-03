@@ -1,4 +1,4 @@
-local L = _G.LibFBCommon
+local L = LibFBCommon
 
 ---add number separators
 ---@param number number     the number needing separators
@@ -323,6 +323,36 @@ function L.FormatTime(format, timeString, tamrielTime)
     return time
 end
 
+---update 45 has removed this function for some reason
+---@param achievementId number
+---@return number
+function L.GetAchievementStatus(achievementId)
+    local completed = 0
+    local total = 0
+    local numCriteria = GetAchievementNumCriteria(achievementId)
+
+    for criterionIndex = 1, numCriteria do
+        local _, numCompleted, numRequired = GetAchievementCriterion(achievementId, criterionIndex)
+
+        completed = completed + numCompleted
+        total = total + numRequired
+    end
+
+    if total > 0 then
+        if completed > 0 then
+            if completed == total then
+                return ZO_ACHIEVEMENTS_COMPLETION_STATUS.COMPLETE
+            else
+                return ZO_ACHIEVEMENTS_COMPLETION_STATUS.IN_PROGRESS
+            end
+        else
+            return ZO_ACHIEVEMENTS_COMPLETION_STATUS.INCOMPLETE
+        end
+    end
+
+    return ZO_ACHIEVEMENTS_COMPLETION_STATUS.NOT_APPLICABLE
+end
+
 ---get the addon version from AddOnVersion field in the manifest
 ---and convert it to the format of major.minor.revision
 ---@param addonName string
@@ -521,11 +551,11 @@ function L.GetSoundDropdownOptions()
     local soundLookup = {}
 
     for _, v in ipairs(L.Sounds) do
-        if (_G.SOUNDS[v] ~= nil) then
-            local soundName = _G.SOUNDS[v]:gsub("_", " ")
+        if (SOUNDS[v] ~= nil) then
+            local soundName = SOUNDS[v]:gsub("_", " ")
 
             table.insert(soundChoices, soundName)
-            soundLookup[soundName] = _G.SOUNDS[v]
+            soundLookup[soundName] = SOUNDS[v]
         end
     end
 
@@ -892,34 +922,4 @@ function L.Trim(stringValue)
     local trimmed = stringValue:gsub("^%s*(.-)%s*$", "%1")
 
     return trimmed
-end
-
----update 45 has removed this function for some reason
----@param achievementId number
----@return number
-function L.GetAchievementStatus(achievementId)
-    local completed = 0
-    local total = 0
-    local numCriteria = GetAchievementNumCriteria(achievementId)
-
-    for criterionIndex = 1, numCriteria do
-        local _, numCompleted, numRequired = GetAchievementCriterion(achievementId, criterionIndex)
-
-        completed = completed + numCompleted
-        total = total + numRequired
-    end
-
-    if total > 0 then
-        if completed > 0 then
-            if completed == total then
-                return ZO_ACHIEVEMENTS_COMPLETION_STATUS.COMPLETE
-            else
-                return ZO_ACHIEVEMENTS_COMPLETION_STATUS.IN_PROGRESS
-            end
-        else
-            return ZO_ACHIEVEMENTS_COMPLETION_STATUS.INCOMPLETE
-        end
-    end
-
-    return ZO_ACHIEVEMENTS_COMPLETION_STATUS.NOT_APPLICABLE
 end

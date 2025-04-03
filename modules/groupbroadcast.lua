@@ -1,30 +1,30 @@
 local DEBUG = (GetDisplayName() == "@Flat-Badger") and true
-local L = _G.LibFBCommon
-local LGB = _G.LibGroupBroadcast
+local L = LibFBCommon
+local LGB = LibGroupBroadcast
 local protocol
 local handler
 local invertedEnum = {}
-local ids = L.ADDON_ID_ENUM
+local ids = {}
 
 do
     -- invert the enum to ease lookup values
     for k, v in pairs(L.ADDON_ID_ENUM) do
         invertedEnum[v] = k
+        table.insert(ids, v)
     end
 end
 
 local function p(text)
     if (DEBUG) then
-        d(text)
+        d("LFC: " .. text)
     end
 end
 
 -- update 45/46 code for LibGroupBroadcast
---- Fire addon specific callbacks when data is received
---- @param unitTag string    The unit tag of the player who sent the data
---- @param data table        The data received
+-- Fire addon specific callbacks when data is received
 local function onData(unitTag, data)
-    p("Data received from " .. unitTag .. " : " .. data.id .. ":" .. data.class .. ":" .. data.data)
+    p("Data received from " ..
+        (unitTag or "nil") .. " : " .. (data.id or "nil") .. ":" .. (data.class or "nil") .. ":" .. (data.data or "nil"))
 
     if (L.DataShareRegister[data.id]) then
         p("Calling callback function for " .. invertedEnum[data.id])
@@ -37,15 +37,17 @@ local function declareProtocol()
     if (handler) then return end
 
     handler = LGB:RegisterHandler(L.Name)
+    handler:SetDisplayName(L.Name)
+
     protocol = handler
         :DeclareProtocol(L.PROTOCOL_ID, L.Name)
-        :AddField(LGB.CreateEnumField("id", L.ADDON_ID_ENUM))
+        :AddField(LGB.CreateEnumField("id", ids))
         :AddField(LGB.CreateNumericField("class", {
             numBits = 4,
             minValue = 0,
             maxValue = 15
         }))
-        :AddField(LGB.CreateVariantField("data", {
+        :AddField(LGB.CreateVariantField({
             LGB.CreateNumericField("ndata", {
                 minValue = 0,
                 maxValue = 4999999
@@ -63,7 +65,7 @@ local function declareProtocol()
         isRelevantInCombat = true,
         replaceQueuedMessages = false,
     })
-    d("finalised:" .. (tostring(finalised) or "nil"))
+
     assert(finalised, "LibGroupBroadcast finalisation failed")
 end
 
@@ -89,11 +91,9 @@ end
 function L.Share(id, class, value)
     if (protocol) then
         if (type(value) == "string") then
-            -- protocol:Send({ id = id, class = class, sdata = value })
-            protocol:Send({ id = id, class = class, data = { sdata = value } })
+            protocol:Send({ id = id, class = class, sdata = value })
         elseif (type(value) == "number") then
-            -- protocol:Send({ id = id, class = class, ndata = value })
-            protocol:Send({ id = id, class = class, data = { ndata = value } })
+            protocol:Send({ id = id, class = class, ndata = value })
         end
 
         p("Shared " .. invertedEnum[id] .. " : " .. class .. ":" .. value)

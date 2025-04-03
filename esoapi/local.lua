@@ -1,0 +1,9 @@
+--- @meta
+--- @diagnostic disable
+
+ZO_ACHIEVEMENTS_COMPLETION_STATUS = {
+    COMPLETE = 1,
+    INCOMPLETE = 2,
+    INCOMPLETE_UNACHIEVABLE = 3,
+    IN_PROGRESS = 4,
+}

@@ -1,5 +1,6 @@
 -- based on LibEventHandler
-local L = _G.LibFBCommon
+--- @class EventManager:ZO_InitializingObject
+local L = LibFBCommon
 local e = ZO_InitializingObject:Subclass()
 
 function e:Initialize(addonName)

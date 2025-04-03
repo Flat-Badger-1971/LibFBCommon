@@ -1,4 +1,6 @@
-local L = _G.LibFBCommon
+local L = LibFBCommon
+
+--- @class TimerManager:ZO_InitializingObject
 local t = ZO_InitializingObject:Subclass()
 
 function t:Initialize(addonName)

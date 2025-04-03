@@ -1,4 +1,4 @@
-local L = _G.LibFBCommon
+local L = LibFBCommon
 
 -- group broadcasting
 L.PROTOCOL_ID = 50
